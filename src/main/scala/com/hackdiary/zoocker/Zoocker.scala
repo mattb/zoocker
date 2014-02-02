@@ -87,14 +87,19 @@ class DockerContainers extends Actor with ActorLogging {
           val image = containerConfig.path("Image").asText.replace("/", ":")
           val path = s"/docker/$image/$id"
           val ports = container.path("NetworkSettings").path("Ports")
-          val data = ports.fields.asScala.toList.flatMap { mapEntry =>
+          val portData = ports.fields.asScala.toList.flatMap { mapEntry =>
             val from = mapEntry.getKey.replace("/tcp", "")
             mapEntry.getValue.elements.asScala.map { toHostMap =>
-              Map("port" -> from,
+              Map(
+                "port" -> from,
                 "hostIp" -> toHostMap.get("HostIp").asText.replace("0.0.0.0", config.host),
                 "hostPort" -> toHostMap.get("HostPort").asText)
             }
           }
+          val data = Map(
+            "id" -> hostname,
+            "image" -> image,
+            "ports" -> portData)
           resultTo ! AddNode(id, path, JacksMapper.writeValueAsString(data))
         }
         context.become(receiveWithContainers(config, existingContainers + id))
