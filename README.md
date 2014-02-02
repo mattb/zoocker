@@ -1,7 +1,7 @@
 Zoocker
 -------
 
-Scans the Docker API and maintains ephemeral nodes in Zookeeper for all containers and their mapped ports.
+Scans the Docker API and maintains ephemeral nodes in Zookeeper for all containers and their mapped ports. Intended to run inside a Docker container using the included Dockerfile. Like a really minimal Synapse - https://github.com/airbnb/synapse
 
 Build:
 
